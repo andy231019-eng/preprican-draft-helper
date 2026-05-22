@@ -59,9 +59,7 @@
               <p class="muted">必要欄位：name 或 recipient_name 或 investor_name，以及 email。</p>
               <div class="upload-row">
                 <input id="recipientExcel" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-                <button type="button" class="secondary" id="uploadRecipients">解析收件人資料</button>
               </div>
-              <div id="recipientSummary" class="mini-summary">尚未上傳收件人資料。</div>
             </div>
             <div>
               <h3>上傳三份 PDF</h3>
@@ -72,6 +70,12 @@
               </div>
               <div id="pdfStatus" class="mini-summary"></div>
             </div>
+          </div>
+
+          <div class="step1-cta">
+            <button type="button" class="primary" id="uploadRecipients" disabled title="請先上傳收件人 Excel">載入收件人名單</button>
+            <p class="cta-hint">上傳 Excel 後，點擊此按鈕將收件人帶入下方勾選表。</p>
+            <div id="recipientSummary" class="mini-summary hidden"></div>
           </div>
         </section>
 

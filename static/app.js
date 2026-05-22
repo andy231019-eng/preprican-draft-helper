@@ -56,9 +56,15 @@ function draftCount() {
 
 function renderRecipientSummary() {
   const summary = state.recipientSummary;
-  $("#recipientSummary").innerHTML = summary
-    ? `已讀取 ${summary.total} 位收件人；active ${summary.active} 位、inactive ${summary.inactive} 位、缺少 Email ${summary.missing_email} 位。`
-    : "尚未上傳收件人資料。";
+  const el = $("#recipientSummary");
+  if (summary) {
+    el.innerHTML = `已載入 ${summary.total} 位收件人，可到下方勾選寄送對象`;
+    el.classList.remove("hidden");
+    el.classList.add("loaded");
+  } else {
+    el.classList.add("hidden");
+    el.classList.remove("loaded");
+  }
 }
 
 function renderPdfStatus() {
@@ -397,6 +403,12 @@ function switchMainTab(tab) {
 }
 
 $("#uploadRecipients").addEventListener("click", uploadRecipients);
+$("#recipientExcel").addEventListener("change", () => {
+  const hasFile = !!$("#recipientExcel").files?.[0];
+  const btn = $("#uploadRecipients");
+  btn.disabled = !hasFile;
+  btn.title = hasFile ? "" : "請先上傳收件人 Excel";
+});
 document.querySelectorAll("[data-report-upload]").forEach((input) => input.addEventListener("change", (event) => uploadReport(event.target.dataset.reportUpload, event.target.files?.[0])));
 $("#recipientSearch").addEventListener("input", renderMatrix);
 $("#recipientFilter").addEventListener("change", renderMatrix);

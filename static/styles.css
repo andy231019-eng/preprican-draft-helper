@@ -686,6 +686,36 @@ pre {
   white-space: pre-wrap;
 }
 
+.step1-cta {
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+}
+
+.step1-cta .primary {
+  min-width: 200px;
+  justify-content: center;
+  padding: 0 24px;
+}
+
+.cta-hint {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.mini-summary.loaded {
+  background: #f0f7f4;
+  border-color: #b8d9cc;
+  color: var(--success);
+  font-weight: 600;
+  margin-top: 0;
+}
+
 @media (max-width: 900px) {
   .topbar,
   .form-grid,
