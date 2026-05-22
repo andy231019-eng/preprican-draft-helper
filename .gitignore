@@ -1,0 +1,42 @@
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Uploaded files (Railway storage is ephemeral; these should not be in git)
+uploads/
+
+# Runtime data
+data/send-log.jsonl
+data/current_database.xlsx
+data/current_database.meta.json
+data/email_templates.json
+
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+.venv/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>投資人報告草稿產生器</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">內部作業工具</p>
+        <h1>投資人報告草稿產生器</h1>
+        <p class="subtitle">用於批次產生投資人報告 Gmail 草稿的內部工具</p>
+      </div>
+      <nav class="steps" aria-label="流程步驟">
+        <span><strong>1</strong>上傳資料</span>
+        <span><strong>2</strong>勾選寄送對象</span>
+        <span><strong>3</strong>預覽草稿</span>
+        <span><strong>4</strong>建立 Gmail 草稿</span>
+        <span><strong>5</strong>草稿模板管理</span>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div class="tab-nav" role="tablist" aria-label="主功能">
+        <button type="button" class="active" data-page-tab="draft">建立草稿</button>
+        <button type="button" data-page-tab="templates">草稿模板管理</button>
+      </div>
+
+      <div id="alert" class="alert hidden"></div>
+
+      <div id="draftPage">
+        <section class="card">
+          <div class="section-heading">
+            <div class="heading-icon">1</div>
+            <div>
+              <p>Step 1</p>
+              <h2>上傳資料</h2>
+            </div>
+          </div>
+          <div class="step-note"><strong>說明</strong><span>請先上傳本次要使用的收件人資料表與三份報告 PDF。系統會根據收件人資料自動產生勾選表，讓你決定每位收件人要收到哪些報告。</span></div>
+          <div class="form-grid">
+            <label>基金／專案名稱<input id="fundName" placeholder="例如：TGVest Asia Partners II, L.P." /></label>
+            <label>報告期間<input id="reportPeriod" placeholder="例如：2026年4月 / 2026 Q1 / 2025年度" /></label>
+            <div class="field">
+              <span>語言模式</span>
+              <div class="segmented" id="languageModeFields">
+                <button type="button" data-language="recipient" class="active">依收件人設定</button>
+                <button type="button" data-language="zh">全部中文</button>
+                <button type="button" data-language="en">全部英文</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="upload-panel">
+            <div>
+              <h3>上傳收件人 Excel</h3>
+              <p class="muted">必要欄位：name 或 recipient_name 或 investor_name，以及 email。</p>
+              <div class="upload-row">
+                <input id="recipientExcel" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                <button type="button" class="secondary" id="uploadRecipients">解析收件人資料</button>
+              </div>
+              <div id="recipientSummary" class="mini-summary">尚未上傳收件人資料。</div>
+            </div>
+            <div>
+              <h3>上傳三份 PDF</h3>
+              <div class="pdf-grid">
+                <label>月報 PDF<input data-report-upload="monthly" type="file" accept="application/pdf,.pdf" /></label>
+                <label>季報 PDF<input data-report-upload="quarterly" type="file" accept="application/pdf,.pdf" /></label>
+                <label>年報 PDF<input data-report-upload="annual" type="file" accept="application/pdf,.pdf" /></label>
+              </div>
+              <div id="pdfStatus" class="mini-summary"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-heading">
+            <div class="heading-icon">2</div>
+            <div>
+              <p>Step 2</p>
+              <h2>勾選寄送對象</h2>
+            </div>
+          </div>
+          <div class="step-note"><strong>說明</strong><span>請在表格中勾選每位收件人要收到的報告。系統會自動統計每份報告的收件人數，以及每位收件人會收到幾份報告。</span></div>
+          <div class="filter-grid compact">
+            <label>搜尋姓名、暱稱、Email<input id="recipientSearch" placeholder="輸入關鍵字" /></label>
+            <label>篩選狀態<select id="recipientFilter"><option value="all">全部</option><option value="sendable">可寄送</option><option value="missing">缺少 Email</option><option value="inactive">停用</option></select></label>
+          </div>
+          <div id="matrixTable"></div>
+        </section>
+
+        <section class="card preview-card">
+          <div class="section-heading">
+            <div class="heading-icon">3</div>
+            <div>
+              <p>Step 3</p>
+              <h2>預覽草稿</h2>
+            </div>
+          </div>
+          <div class="step-note"><strong>說明</strong><span>這裡會顯示系統準備建立的 Gmail 草稿。請確認每位收件人的地址、主旨、內文與附件是否正確。</span></div>
+          <div class="toolbar">
+            <button type="button" class="primary" id="generatePreview">產生預覽</button>
+            <span class="counter" id="previewCount">0 封預覽 Email</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>是否建立草稿</th>
+                  <th>收件人</th>
+                  <th>Email</th>
+                  <th>CC</th>
+                  <th>主旨</th>
+                  <th>附件數</th>
+                  <th>附件清單</th>
+                  <th>狀態</th>
+                  <th>預覽</th>
+                </tr>
+              </thead>
+              <tbody id="previewRows"><tr><td colspan="9">請先勾選寄送對象並產生預覽。</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-heading">
+            <div class="heading-icon">4</div>
+            <div>
+              <p>Step 4</p>
+              <h2>建立 Gmail 草稿</h2>
+            </div>
+          </div>
+          <div class="step-note"><strong>說明</strong><span>確認無誤後，系統會為每位收件人建立一封 Gmail 草稿。第一版只建立草稿，不會直接寄出，方便你在 Gmail 中做最後檢查。</span></div>
+          <div class="action-row">
+            <button type="button" class="primary" id="createDrafts">建立 Gmail 草稿</button>
+            <span class="muted">第一版只建立草稿，不會直接寄出 Email。</span>
+          </div>
+          <ul class="validation-list hidden" id="validationList"></ul>
+          <div id="draftResults"></div>
+        </section>
+      </div>
+
+      <div id="templatesPage" class="hidden">
+        <section class="card">
+          <div class="section-heading">
+            <div class="heading-icon">5</div>
+            <div>
+              <p>Step 5</p>
+              <h2>草稿模板管理</h2>
+            </div>
+          </div>
+          <div class="step-note"><strong>說明</strong><span>你可以在這裡調整 Email 主旨與內文模板。建立草稿時，系統會依語言模式套用中文或英文模板，並自動替換 {{}} 變數。</span></div>
+          <div class="template-layout">
+            <div>
+              <div class="segmented template-language">
+                <button type="button" class="active" data-template-lang="zh">中文預設模板</button>
+                <button type="button" data-template-lang="en">英文預設模板</button>
+              </div>
+              <label>模板名稱<input id="templateName" /></label>
+              <label>語言<select id="templateLanguage"><option value="zh">中文</option><option value="en">英文</option></select></label>
+              <label>主旨模板<input id="templateSubject" /></label>
+              <label>內文模板<textarea id="templateBody" rows="12"></textarea></label>
+              <button type="button" class="primary" id="saveTemplates">儲存模板</button>
+            </div>
+            <aside class="query-panel">
+              <h3>可用變數</h3>
+              <ul class="variable-list">
+                <li><code>{{fund_name}}</code>：基金／專案名稱</li>
+                <li><code>{{report_period}}</code>：報告期間</li>
+                <li><code>{{recipient_name}}</code>：收件人姓名</li>
+                <li><code>{{nickname}}</code>：收件人暱稱</li>
+                <li><code>{{email}}</code>：收件人 Email</li>
+                <li><code>{{cc}}</code>：副本</li>
+                <li><code>{{attachment_list}}</code>：附件清單</li>
+                <li><code>{{report_count}}</code>：本次報告數量</li>
+                <li><code>{{report_names}}</code>：本次報告名稱，以逗號分隔</li>
+              </ul>
+              <h3>模板預覽</h3>
+              <dl class="email-meta" id="templatePreviewMeta"></dl>
+              <pre id="templatePreviewBody"></pre>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div class="modal-backdrop hidden" id="modal">
+      <dialog open>
+        <div class="modal-head">
+          <h2>Email 預覽</h2>
+          <button class="icon-button" id="closeModal" type="button">×</button>
+        </div>
+        <dl class="email-meta" id="emailMeta"></dl>
+        <pre id="emailBody"></pre>
+      </dialog>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
