@@ -93,6 +93,13 @@
             <label>篩選狀態<select id="recipientFilter"><option value="all">全部</option><option value="sendable">可寄送</option><option value="missing">缺少 Email</option><option value="inactive">停用</option></select></label>
           </div>
           <div id="matrixTable"></div>
+          <div class="step2-cta">
+            <button type="button" class="primary" id="generatePreview" disabled>產生草稿預覽</button>
+            <div class="cta-meta">
+              <p class="cta-hint">勾選完成後，點擊此按鈕產生每位收件人的 Gmail 草稿預覽。</p>
+              <p class="cta-validation" id="previewValidationHint">請先載入收件人名單</p>
+            </div>
+          </div>
         </section>
 
         <section class="card preview-card">
@@ -102,12 +109,9 @@
               <p>Step 3</p>
               <h2>預覽草稿</h2>
             </div>
+            <span class="counter hidden" id="previewCount"></span>
           </div>
           <div class="step-note"><strong>說明</strong><span>這裡會顯示系統準備建立的 Gmail 草稿。請確認每位收件人的地址、主旨、內文與附件是否正確。</span></div>
-          <div class="toolbar">
-            <button type="button" class="primary" id="generatePreview">產生預覽</button>
-            <span class="counter" id="previewCount">0 封預覽 Email</span>
-          </div>
           <div class="table-wrap">
             <table>
               <thead>
@@ -138,7 +142,7 @@
           </div>
           <div class="step-note"><strong>說明</strong><span>確認無誤後，系統會為每位收件人建立一封 Gmail 草稿。第一版只建立草稿，不會直接寄出，方便你在 Gmail 中做最後檢查。</span></div>
           <div class="action-row">
-            <button type="button" class="primary" id="createDrafts">建立 Gmail 草稿</button>
+            <button type="button" class="primary" id="createDrafts" disabled title="請先產生草稿預覽，再建立 Gmail 草稿">建立 Gmail 草稿</button>
             <span class="muted">第一版只建立草稿，不會直接寄出 Email。</span>
           </div>
           <ul class="validation-list hidden" id="validationList"></ul>

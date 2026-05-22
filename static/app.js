@@ -67,6 +67,34 @@ function renderRecipientSummary() {
   }
 }
 
+function updateGeneratePreviewButton() {
+  const btn = $("#generatePreview");
+  const hint = $("#previewValidationHint");
+  if (!state.recipients.length) {
+    btn.disabled = true;
+    hint.textContent = "請先載入收件人名單";
+    return;
+  }
+  const hasSelection = state.recipients.some((r) =>
+    REPORTS.some((report) => state.selectionMatrix[r.recipient_id]?.[report.id])
+  );
+  if (!hasSelection) {
+    btn.disabled = true;
+    hint.textContent = "請至少勾選一位收件人的報告";
+    return;
+  }
+  for (const report of REPORTS) {
+    const isSelected = state.recipients.some((r) => state.selectionMatrix[r.recipient_id]?.[report.id]);
+    if (isSelected && !state.reportFiles[report.id]) {
+      btn.disabled = true;
+      hint.textContent = `已勾選${report.label}，但尚未上傳${report.label} PDF`;
+      return;
+    }
+  }
+  btn.disabled = false;
+  hint.textContent = "";
+}
+
 function renderPdfStatus() {
   $("#pdfStatus").innerHTML = REPORTS.map((report) => {
     const file = state.reportFiles[report.id];
@@ -92,6 +120,7 @@ function renderMatrix() {
   const recipients = filteredRecipients();
   if (!state.recipients.length) {
     $("#matrixTable").innerHTML = `<div class="muted">請先上傳收件人 Excel。</div>`;
+    updateGeneratePreviewButton();
     return;
   }
 
@@ -176,6 +205,7 @@ function renderMatrix() {
       renderPreviewRows();
     });
   });
+  updateGeneratePreviewButton();
 }
 
 async function uploadRecipients() {
@@ -253,10 +283,23 @@ async function generatePreview() {
 }
 
 function renderPreviewRows() {
-  $("#previewCount").textContent = `${state.previews.filter((item) => item.include).length} 封預覽 Email`;
+  const includedCount = state.previews.filter((item) => item.include).length;
+  const counterEl = $("#previewCount");
+  if (state.previews.length) {
+    counterEl.textContent = `共 ${includedCount} 封預覽 Email`;
+    counterEl.classList.remove("hidden");
+  } else {
+    counterEl.classList.add("hidden");
+  }
+  const readyCount = state.previews.filter((p) => p.include && p.status === "ready").length;
+  const createDraftsBtn = $("#createDrafts");
+  createDraftsBtn.disabled = readyCount === 0;
+  createDraftsBtn.title = readyCount === 0
+    ? (state.previews.length ? "沒有可建立的 Gmail 草稿" : "請先產生草稿預覽，再建立 Gmail 草稿")
+    : "";
   const rows = $("#previewRows");
   if (!state.previews.length) {
-    rows.innerHTML = `<tr><td colspan="9">請先勾選寄送對象並產生預覽。</td></tr>`;
+    rows.innerHTML = `<tr><td colspan="9">尚未產生草稿預覽。請先在上方勾選寄送對象，並點擊「產生草稿預覽」。</td></tr>`;
     return;
   }
   rows.innerHTML = state.previews.map((preview) => `

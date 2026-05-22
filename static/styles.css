@@ -686,6 +686,33 @@ pre {
   white-space: pre-wrap;
 }
 
+.step2-cta {
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+}
+
+.step2-cta .primary {
+  flex-shrink: 0;
+  min-width: 160px;
+  justify-content: center;
+}
+
+.cta-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cta-validation {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+}
+
 .step1-cta {
   border-top: 1px solid var(--line);
   display: flex;
